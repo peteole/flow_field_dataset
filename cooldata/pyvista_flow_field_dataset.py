@@ -484,3 +484,70 @@ class PyvistaFlowFieldDataset:
 
 def get_sample_bounds(sample):
     return sample.get_bounding_box()
+
+def get_metadata_df(data_dir: str, force_download=False): 
+    """
+    Downloads and loads the metadata file as a Pandas DataFrame without downloading CGNS files.
+    
+    This function retrieves the metadata.parquet file from the HuggingFace repository 
+    (datasets/bgce/cooldata-v2) and returns it as a pandas DataFrame. The metadata contains
+    SystemParameters for all samples in the dataset, including information about geometry
+    (quaders and cylinders), boundary conditions, and other simulation parameters.
+    
+    This is useful for:
+    - Exploring the dataset without downloading large CGNS files
+    - Analyzing simulation input parameters and distributions
+    - Filtering or selecting specific samples before downloading full data
+    - Quick inspection of the dataset contents
+    
+    Parameters
+    ----------
+    data_dir : str
+        The local directory where the metadata file will be stored. The file will be saved as
+        'metadata.parquet' in this directory. If the file already exists, it will be loaded
+        from disk unless force_download is True.
+    force_download : bool, optional
+        If True, re-downloads the metadata file from HuggingFace even if it already exists
+        locally. Default is False.
+    
+    Returns
+    -------
+    pd.DataFrame
+        A pandas DataFrame containing metadata for all samples in the dataset. Each row 
+        corresponds to one design/sample and includes columns for SystemParameters such as
+        geometry definitions, boundary conditions, and other simulation settings.
+    
+    Examples
+    --------
+    >>> from cooldata.pyvista_flow_field_dataset import get_metadata_df
+    >>> 
+    >>> # Download and load metadata
+    >>> metadata_df = get_metadata_df("./data")
+    >>> 
+    >>> # Inspect the metadata
+    >>> print(f"Total samples: {len(metadata_df)}")
+    >>> print(metadata_df.head())
+    >>> 
+    >>> # Force re-download if needed
+    >>> metadata_df = get_metadata_df("./data", force_download=True)
+    
+    Notes
+    -----
+    - The metadata file contains information for ALL samples in the dataset
+    - The file is stored in Parquet format for efficient storage and loading
+    - No CGNS files are downloaded by this function, making it very lightweight
+    - The returned DataFrame can be used with `add_metadata()` method of PyvistaFlowFieldDataset but note that existing methods for loading data already include the metadata so it is not necessary to call this again
+    
+    See Also
+    --------
+    PyvistaFlowFieldDataset.add_metadata : Add metadata to dataset samples
+    df_row_to_system_parameters : Convert DataFrame row to SystemParameters object
+    """
+    local_metadata_path = os.path.join(data_dir, "metadata.parquet")
+    if not os.path.exists(local_metadata_path) or force_download:
+        # download metadata file
+        repo_id = "datasets/bgce/cooldata-v2"
+        fs = hf.HfFileSystem()
+        metadata_file = f"{repo_id}/metadata.parquet"
+        fs.download(metadata_file, local_metadata_path)
+    return pd.read_parquet(local_metadata_path)
