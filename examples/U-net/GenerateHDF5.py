@@ -9,8 +9,8 @@ from cooldata.metadata import MetadataFilter
 # ─────────────────────────────────────────────────────────────────────────────
 # Settings
 # ─────────────────────────────────────────────────────────────────────────────
-METADATA_PATH = "datasets/pyvista/metadata.parquet"
-DATA_DIR      = "datasets/pyvista"
+METADATA_PATH = "../datasets/pyvista/metadata.parquet"
+DATA_DIR      = "../datasets/pyvista"
 OUT_PATH      = "cool_dataset.h5"
 NUM_SAMPLES   = 1000
 
