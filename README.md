@@ -39,7 +39,7 @@ If you want to use the DGL support, you also need to install the [DGL](https://w
 | Bodies 3–4 | Quads — sometimes active |
 | Bodies 5–6 | Cylinders — sometimes active |
 
-A body is **inactive** when its y-position equals the sentinel value `1.0`.
+A body is **inactive** when its y-position equals the value `1.0`.
 
 ## Filtering & Downloading
 
