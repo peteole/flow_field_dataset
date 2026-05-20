@@ -140,3 +140,21 @@ See the `examples` folder for a detailed example of how to use the library.
 ## Sample Gallery
 
 [Browse sample gallery](https://htmlpreview.github.io/?https://github.com/peteole/flow_field_dataset/blob/main/gallery.html)
+
+## Leaderboard
+
+Benchmark results for **surface temperature field prediction** trained on 50,000 samples, evaluated on 1,000 in-distribution test samples. All models trained for 100 epochs on 8× NVIDIA H100 GPUs.
+
+| Rank | Model | Type | MSE ↓ | MAE ↓ | Max AE ↓ | R² ↑ | Training Time | Inference Time (CPU) | Parameters |
+|---|---|---|---|---|---|---|---|---|---|
+| 🥇 1 | [Transolver](https://arxiv.org/abs/2402.02366) | Transformer / Surface | 0.00122 | 0.82°C | 60.24°C | 0.9685 | ~1 hour | 1369.1 ms | 1,539,649 |
+| 🥈 2 | [3D U-Net](https://arxiv.org/abs/1606.06650) | Volumetric | 0.00549 | 2.07°C | 58.46°C | 0.8156 | ~38 mins | 440.3 ms | 3,931,047 |
+| 🥉 3 | [MeshGraphNet](https://arxiv.org/abs/2010.03409) | Graph / Surface | 0.02109 | 5.73°C | 55.56°C | 0.5034 | ~40 mins | 8362.6 ms | 2,339,201 |
+
+> **Notes:**
+> - Inference times measured as average over 100 runs on CPU (AMD64 Ryzen).
+> - MeshGraphNet shows near-flat scaling across all dataset sizes due to a fixed-radius message-passing bottleneck.
+> - 3D U-Net plateaus beyond ~10,000 samples due to voxelization resolution ceiling (64³ grid).
+> - Transolver has not yet saturated at 50,000 samples and is expected to improve further with more data.
+> - Want to submit a result? Open a pull request with your model, training setup, and evaluation script.
+
